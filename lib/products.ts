@@ -891,7 +891,7 @@ export const products: Product[] = [
     id: 'home-015',
     name: 'Countertop Ice Maker Machine',
     description: 'Portable ice maker that produces 26 lbs of bullet ice per day. Ready in 6 minutes with self-cleaning function.',
-    price: 89.99,
+    price: 94.99,
     originalPrice: 229.99,
     category: 'Home & Kitchen',
     subcategory: 'Appliances',
