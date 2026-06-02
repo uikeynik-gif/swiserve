@@ -12,7 +12,9 @@ import {
   Truck, 
   Shield,
   ChevronDown,
-  Check
+  Check,
+  Smartphone,
+  Wallet
 } from 'lucide-react'
 import { useCart } from '@/lib/store'
 import { cn } from '@/lib/utils'
@@ -23,27 +25,33 @@ const shippingMethods = [
   { id: 'overnight', name: 'Overnight Shipping', price: 29.99, days: '1 business day' },
 ]
 
+const paymentMethods = [
+  { id: 'card', name: 'Credit/Debit Card', icon: CreditCard },
+  { id: 'upi', name: 'UPI', icon: Smartphone },
+  { id: 'paypal', name: 'PayPal', icon: Wallet },
+]
+
 export default function CheckoutPage() {
   const router = useRouter()
-  const { items, getTotalPrice, clearCart } = useCart()
+  const { cart, getCartTotal, clearCart } = useCart()
   const [mounted, setMounted] = useState(false)
   const [selectedShipping, setSelectedShipping] = useState('standard')
+  const [selectedPayment, setSelectedPayment] = useState('card')
   const [isProcessing, setIsProcessing] = useState(false)
   const [formData, setFormData] = useState({
+    fullName: '',
     email: '',
-    firstName: '',
-    lastName: '',
+    phone: '',
     address: '',
-    apartment: '',
     city: '',
     state: '',
-    zipCode: '',
+    postalCode: '',
     country: 'United States',
-    phone: '',
     cardNumber: '',
     cardName: '',
     expiry: '',
     cvv: '',
+    upiId: '',
   })
 
   useEffect(() => {
@@ -58,7 +66,7 @@ export default function CheckoutPage() {
     )
   }
 
-  if (items.length === 0) {
+  if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
@@ -82,7 +90,7 @@ export default function CheckoutPage() {
     )
   }
 
-  const subtotal = getTotalPrice()
+  const subtotal = getCartTotal()
   const shipping = shippingMethods.find(s => s.id === selectedShipping)?.price || 0
   const tax = subtotal * 0.08
   const total = subtotal + shipping + tax
@@ -92,9 +100,71 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    const matches = v.match(/\d{4,16}/g)
+    const match = (matches && matches[0]) || ''
+    const parts = []
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4))
+    }
+    return parts.length ? parts.join(' ') : value
+  }
+
+  const formatExpiry = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4)
+    }
+    return v
+  }
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCardNumber(e.target.value)
+    setFormData(prev => ({ ...prev, cardNumber: formatted }))
+  }
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatExpiry(e.target.value.replace('/', ''))
+    setFormData(prev => ({ ...prev, expiry: formatted }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsProcessing(true)
+    
+    // Create order data to pass to confirmation page
+    const orderData = {
+      orderId: `SW${Date.now().toString().slice(-8)}`,
+      customerName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.images[0],
+      })),
+      shippingAddress: {
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        postalCode: formData.postalCode,
+        country: formData.country,
+      },
+      paymentMethod: paymentMethods.find(p => p.id === selectedPayment)?.name || 'Credit/Debit Card',
+      shippingMethod: shippingMethods.find(s => s.id === selectedShipping)?.name || 'Standard Shipping',
+      subtotal,
+      shipping,
+      tax,
+      total,
+      orderDate: new Date().toISOString(),
+      estimatedDelivery: new Date(Date.now() + (selectedShipping === 'overnight' ? 1 : selectedShipping === 'express' ? 3 : 7) * 24 * 60 * 60 * 1000).toISOString(),
+    }
+
+    // Store order data in sessionStorage for the confirmation page
+    sessionStorage.setItem('lastOrder', JSON.stringify(orderData))
     
     // Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -113,7 +183,7 @@ export default function CheckoutPage() {
               <ArrowLeft className="w-5 h-5" />
               <span>Back to Cart</span>
             </Link>
-            <Link href="/" className="text-2xl font-bold text-foreground">
+            <Link href="/" className="text-2xl font-bold text-foreground font-logo">
               Swiserve
             </Link>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -137,6 +207,21 @@ export default function CheckoutPage() {
               >
                 <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
                 <div className="space-y-4">
+                  <div>
+                    <label htmlFor="fullName" className="block text-sm font-medium mb-1.5">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      id="fullName"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                      placeholder="John Doe"
+                    />
+                  </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium mb-1.5">
                       Email Address
@@ -162,6 +247,7 @@ export default function CheckoutPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
+                      required
                       className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
                       placeholder="+1 (555) 000-0000"
                     />
@@ -178,36 +264,6 @@ export default function CheckoutPage() {
               >
                 <h2 className="text-lg font-semibold mb-4">Shipping Address</h2>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium mb-1.5">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium mb-1.5">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                      />
-                    </div>
-                  </div>
                   <div>
                     <label htmlFor="address" className="block text-sm font-medium mb-1.5">
                       Street Address
@@ -220,20 +276,7 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                      placeholder="123 Main Street"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="apartment" className="block text-sm font-medium mb-1.5">
-                      Apartment, suite, etc. (optional)
-                    </label>
-                    <input
-                      type="text"
-                      id="apartment"
-                      name="apartment"
-                      value={formData.apartment}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                      placeholder="123 Main Street, Apt 4B"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -249,6 +292,7 @@ export default function CheckoutPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                        placeholder="New York"
                       />
                     </div>
                     <div>
@@ -263,22 +307,24 @@ export default function CheckoutPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                        placeholder="NY"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="zipCode" className="block text-sm font-medium mb-1.5">
-                        ZIP Code
+                      <label htmlFor="postalCode" className="block text-sm font-medium mb-1.5">
+                        Postal Code
                       </label>
                       <input
                         type="text"
-                        id="zipCode"
-                        name="zipCode"
-                        value={formData.zipCode}
+                        id="postalCode"
+                        name="postalCode"
+                        value={formData.postalCode}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                        placeholder="10001"
                       />
                     </div>
                     <div>
@@ -299,6 +345,7 @@ export default function CheckoutPage() {
                           <option>Australia</option>
                           <option>Germany</option>
                           <option>France</option>
+                          <option>India</option>
                         </select>
                         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
                       </div>
@@ -360,80 +407,172 @@ export default function CheckoutPage() {
                 </div>
               </motion.div>
 
-              {/* Payment */}
+              {/* Payment Method Selection */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 className="bg-card rounded-2xl p-6 shadow-premium"
               >
-                <h2 className="text-lg font-semibold mb-4">Payment Information</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="cardNumber" className="block text-sm font-medium mb-1.5">
-                      Card Number
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        id="cardNumber"
-                        name="cardNumber"
-                        value={formData.cardNumber}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 pl-12 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                        placeholder="1234 5678 9012 3456"
-                      />
-                      <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="cardName" className="block text-sm font-medium mb-1.5">
-                      Name on Card
-                    </label>
-                    <input
-                      type="text"
-                      id="cardName"
-                      name="cardName"
-                      value={formData.cardName}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="expiry" className="block text-sm font-medium mb-1.5">
-                        Expiry Date
+                <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  {paymentMethods.map((method) => {
+                    const Icon = method.icon
+                    return (
+                      <label
+                        key={method.id}
+                        className={cn(
+                          "flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all",
+                          selectedPayment === method.id
+                            ? "border-accent bg-accent/5"
+                            : "border-border hover:border-accent/50"
+                        )}
+                      >
+                        <Icon className={cn(
+                          "w-6 h-6 mb-2",
+                          selectedPayment === method.id ? "text-accent" : "text-muted-foreground"
+                        )} />
+                        <span className="text-sm font-medium text-center">{method.name}</span>
+                        <input
+                          type="radio"
+                          name="payment"
+                          value={method.id}
+                          checked={selectedPayment === method.id}
+                          onChange={(e) => setSelectedPayment(e.target.value)}
+                          className="sr-only"
+                        />
                       </label>
-                      <input
-                        type="text"
-                        id="expiry"
-                        name="expiry"
-                        value={formData.expiry}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                        placeholder="MM/YY"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="cvv" className="block text-sm font-medium mb-1.5">
-                        CVV
-                      </label>
-                      <input
-                        type="text"
-                        id="cvv"
-                        name="cvv"
-                        value={formData.cvv}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
-                        placeholder="123"
-                      />
-                    </div>
-                  </div>
+                    )
+                  })}
                 </div>
+
+                {/* Credit/Debit Card Form */}
+                {selectedPayment === 'card' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4"
+                  >
+                    <div>
+                      <label htmlFor="cardName" className="block text-sm font-medium mb-1.5">
+                        Card Holder Name
+                      </label>
+                      <input
+                        type="text"
+                        id="cardName"
+                        name="cardName"
+                        value={formData.cardName}
+                        onChange={handleInputChange}
+                        required={selectedPayment === 'card'}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                        placeholder="JOHN DOE"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="cardNumber" className="block text-sm font-medium mb-1.5">
+                        Card Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          id="cardNumber"
+                          name="cardNumber"
+                          value={formData.cardNumber}
+                          onChange={handleCardNumberChange}
+                          required={selectedPayment === 'card'}
+                          maxLength={19}
+                          className="w-full px-4 py-3 pl-12 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                          placeholder="1234 5678 9012 3456"
+                        />
+                        <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="expiry" className="block text-sm font-medium mb-1.5">
+                          Expiry Date
+                        </label>
+                        <input
+                          type="text"
+                          id="expiry"
+                          name="expiry"
+                          value={formData.expiry}
+                          onChange={handleExpiryChange}
+                          required={selectedPayment === 'card'}
+                          maxLength={5}
+                          className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                          placeholder="MM/YY"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="cvv" className="block text-sm font-medium mb-1.5">
+                          CVV
+                        </label>
+                        <input
+                          type="text"
+                          id="cvv"
+                          name="cvv"
+                          value={formData.cvv}
+                          onChange={handleInputChange}
+                          required={selectedPayment === 'card'}
+                          maxLength={4}
+                          className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                          placeholder="123"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* UPI Form */}
+                {selectedPayment === 'upi' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4"
+                  >
+                    <div>
+                      <label htmlFor="upiId" className="block text-sm font-medium mb-1.5">
+                        UPI ID
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          id="upiId"
+                          name="upiId"
+                          value={formData.upiId}
+                          onChange={handleInputChange}
+                          required={selectedPayment === 'upi'}
+                          className="w-full px-4 py-3 pl-12 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-shadow"
+                          placeholder="yourname@upi"
+                        />
+                        <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1.5">
+                        Enter your UPI ID linked to your bank account
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* PayPal */}
+                {selectedPayment === 'paypal' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="text-center py-4"
+                  >
+                    <div className="bg-secondary/50 rounded-xl p-6">
+                      <Wallet className="w-12 h-12 mx-auto text-accent mb-3" />
+                      <p className="text-sm text-muted-foreground">
+                        You will be redirected to PayPal to complete your payment securely.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             </div>
 
@@ -449,8 +588,8 @@ export default function CheckoutPage() {
                 
                 {/* Items */}
                 <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
-                  {items.map((item) => (
-                    <div key={`${item.id}-${item.selectedColor}-${item.selectedSize}`} className="flex gap-4">
+                  {cart.map((item) => (
+                    <div key={item.id} className="flex gap-4">
                       <div className="relative w-16 h-16 bg-secondary/30 rounded-lg overflow-hidden flex-shrink-0">
                         <Image
                           src={item.images[0]}
@@ -464,13 +603,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{item.name}</p>
-                        {(item.selectedColor || item.selectedSize) && (
-                          <p className="text-xs text-muted-foreground">
-                            {item.selectedColor && `Color: ${item.selectedColor}`}
-                            {item.selectedColor && item.selectedSize && ' / '}
-                            {item.selectedSize && `Size: ${item.selectedSize}`}
-                          </p>
-                        )}
+                        <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
                         <p className="text-sm font-medium mt-1">${(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                     </div>
@@ -531,7 +664,7 @@ export default function CheckoutPage() {
                   ) : (
                     <>
                       <Lock className="w-5 h-5" />
-                      Pay ${total.toFixed(2)}
+                      Place Order
                     </>
                   )}
                 </button>
