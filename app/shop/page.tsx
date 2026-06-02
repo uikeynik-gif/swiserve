@@ -48,7 +48,7 @@ function ShopContent() {
     // Apply category
     if (selectedCategory) {
       result = result.filter(
-        (p) => p.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory.toLowerCase()
+        (p) => p.category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '').replace(/--/g, '-') === selectedCategory.toLowerCase()
       )
     }
 

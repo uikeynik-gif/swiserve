@@ -1780,7 +1780,7 @@ export const categories = [
     slug: 'home-kitchen',
     image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
     description: 'Appliances and cookware',
-    productCount: 6,
+    productCount: 14,
   },
   {
     name: 'Office Accessories',
