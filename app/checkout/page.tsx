@@ -33,7 +33,6 @@ const paymentMethods = [
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { cart, getCartTotal, clearCart } = useCart()
   const [mounted, setMounted] = useState(false)
   const [selectedShipping, setSelectedShipping] = useState('standard')
   const [selectedPayment, setSelectedPayment] = useState('card')
@@ -53,6 +52,12 @@ export default function CheckoutPage() {
     cvv: '',
     upiId: '',
   })
+
+  // Get cart data safely after mount to avoid hydration issues
+  const cartStore = useCart()
+  const cart = mounted ? cartStore.cart : []
+  const getCartTotal = cartStore.getCartTotal
+  const clearCart = cartStore.clearCart
 
   useEffect(() => {
     setMounted(true)
@@ -90,7 +95,7 @@ export default function CheckoutPage() {
     )
   }
 
-  const subtotal = getCartTotal()
+  const subtotal = mounted ? getCartTotal() : 0
   const shipping = shippingMethods.find(s => s.id === selectedShipping)?.price || 0
   const tax = subtotal * 0.08
   const total = subtotal + shipping + tax
