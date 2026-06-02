@@ -390,42 +390,7 @@ export const products: Product[] = [
       'Compact portable design',
     ],
   },
-  {
-    id: 'smart-006',
-    name: 'Smart Robot Vacuum',
-    description: 'AI-powered robot vacuum with LiDAR navigation, automatic dust emptying, and multi-floor mapping.',
-    price: 142.99,
-    originalPrice: 349.99,
-    category: 'Smart Gadgets',
-    subcategory: 'Home Automation',
-    images: [
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-      'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800&q=80',
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
-      'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=800&q=80',
-      'https://images.unsplash.com/photo-1484154218962-a197022b25ba?w=800&q=80',
-    ],
-    rating: 4.7,
-    reviewCount: 1456,
-    inStock: true,
-    specifications: {
-      'Navigation': 'LiDAR + AI',
-      'Suction Power': '5000Pa',
-      'Dustbin': '600ml',
-      'Battery': '5200mAh',
-      'Runtime': '180 minutes',
-      'Auto Empty': 'Yes',
-    },
-    features: [
-      'LiDAR precision navigation',
-      '5000Pa powerful suction',
-      'Auto dust emptying station',
-      'Multi-floor mapping',
-      'No-go zone setting',
-      'Voice control compatible',
-    ],
-    badge: 'sale',
-  },
+  
   // Home & Kitchen
   
   {
