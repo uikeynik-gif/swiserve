@@ -683,10 +683,7 @@ export const products: Product[] = [
     subcategory: 'Appliances',
     images: [
       'https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=800&q=80',
-      'https://images.unsplash.com/photo-1622480914645-7b43d16eb5e5?w=800&q=80',
-      'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
-      'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=800&q=80',
-      'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&q=80',
+
     ],
     rating: 4.7,
     reviewCount: 3456,
