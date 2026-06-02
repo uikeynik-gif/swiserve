@@ -29,8 +29,8 @@ const contactMethods = [
     icon: Phone,
     title: 'Call Us',
     description: 'Mon-Fri from 8am to 6pm EST',
-    value: '+1 (800) 123-4567',
-    href: 'tel:+18001234567',
+    value: '+1 (310) 690-0511',
+    href: 'tel:+1310690-0511',
   },
   {
     icon: MessageSquare,
@@ -279,8 +279,7 @@ export default function ContactPage() {
                       <div>
                         <p className="font-medium">Address</p>
                         <p className="text-sm text-muted-foreground">
-                          123 Commerce Street, Suite 500<br />
-                          San Francisco, CA 94102
+                          United States
                         </p>
                       </div>
                     </div>

@@ -167,7 +167,7 @@ export default function HomePage() {
                     className="absolute -top-4 -right-4 glass rounded-2xl p-4 shadow-premium-lg"
                   >
                     <p className="text-sm text-muted-foreground">Starting from</p>
-                    <p className="text-2xl font-bold">$299.99</p>
+                    <p className="text-2xl font-bold">$149.99</p>
                   </motion.div>
                 </div>
               </motion.div>
