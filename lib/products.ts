@@ -207,7 +207,7 @@ export const products: Product[] = [
     subcategory: 'Home Automation',
     images: [
       'https://images.unsplash.com/photo-1558089687-f282ffcbc126?w=800&q=80',
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
+      'https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?w=800&q=80',
     ],
     rating: 4.6,
     reviewCount: 987,
@@ -334,8 +334,8 @@ export const products: Product[] = [
     category: 'Smart Gadgets',
     subcategory: 'Health',
     images: [
-      'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800&q=80',
-      'https://images.unsplash.com/photo-1484154218962-a197022b25ba?w=800&q=80',
+      'https://images.unsplash.com/photo-1605648916361-9bc12ad6a569?w=800&q=80',
+      'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80',
     ],
     rating: 4.4,
     reviewCount: 654,
@@ -369,7 +369,7 @@ export const products: Product[] = [
     subcategory: 'Appliances',
     images: [
       'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&q=80',
-      'https://images.unsplash.com/photo-1585515320310-259814833e62?w=800&q=80',
+      'https://images.unsplash.com/photo-1648655652062-270ab29e4a94?w=800&q=80',
     ],
     rating: 4.6,
     reviewCount: 2876,
@@ -465,7 +465,7 @@ export const products: Product[] = [
     subcategory: 'Appliances',
     images: [
       'https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=800&q=80',
-      'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=800&q=80',
+      'https://images.unsplash.com/photo-1585515320310-259814833e62?w=800&q=80',
     ],
     rating: 4.6,
     reviewCount: 987,
@@ -627,7 +627,7 @@ export const products: Product[] = [
     subcategory: 'Appliances',
     images: [
       'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=800&q=80',
-      'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&q=80',
+      'https://images.unsplash.com/photo-1643116774075-acc00caa9a7b?w=800&q=80',
     ],
     rating: 4.5,
     reviewCount: 2198,
@@ -660,7 +660,7 @@ export const products: Product[] = [
     subcategory: 'Gadgets',
     images: [
       'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=800&q=80',
-      'https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&q=80',
+      'https://images.unsplash.com/photo-1595434091143-b375ced5fe5c?w=800&q=80',
     ],
     rating: 4.6,
     reviewCount: 1567,
@@ -692,8 +692,8 @@ export const products: Product[] = [
     category: 'Home & Kitchen',
     subcategory: 'Appliances',
     images: [
-      'https://images.unsplash.com/photo-1543076499-a6133cb932fd?w=800&q=80',
-      'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=80',
+      'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=800&q=80',
+      'https://images.unsplash.com/photo-1625938144755-652e08e359b7?w=800&q=80',
     ],
     rating: 4.4,
     reviewCount: 2341,
@@ -790,7 +790,7 @@ export const products: Product[] = [
     subcategory: 'Organization',
     images: [
       'https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&q=80',
-      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',
+      'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&q=80',
     ],
     rating: 4.5,
     reviewCount: 876,
@@ -980,7 +980,7 @@ export const products: Product[] = [
     subcategory: 'Organization',
     images: [
       'https://images.unsplash.com/photo-1553531889-e6cf4d692b1b?w=800&q=80',
-      'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800&q=80',
+      'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=800&q=80',
     ],
     rating: 4.8,
     reviewCount: 3456,
@@ -1043,7 +1043,7 @@ export const products: Product[] = [
     subcategory: 'Comfort',
     images: [
       'https://images.unsplash.com/photo-1520219306100-ec4afeeefe58?w=800&q=80',
-      'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80',
+      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80',
     ],
     rating: 4.5,
     reviewCount: 2876,
@@ -1106,7 +1106,7 @@ export const products: Product[] = [
     subcategory: 'Strength',
     images: [
       'https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=800&q=80',
-      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
+      'https://images.unsplash.com/photo-1517130038641-a774d04afb3c?w=800&q=80',
     ],
     rating: 4.6,
     reviewCount: 876,
@@ -1171,7 +1171,7 @@ export const products: Product[] = [
     subcategory: 'Yoga',
     images: [
       'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=800&q=80',
-      'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=800&q=80',
+      'https://images.unsplash.com/photo-1592432678016-e910b452f9a2?w=800&q=80',
     ],
     rating: 4.7,
     reviewCount: 2345,
@@ -1264,7 +1264,7 @@ export const products: Product[] = [
     category: 'Fitness Equipment',
     subcategory: 'Strength',
     images: [
-      'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
+      'https://images.unsplash.com/photo-1517344884509-a0c97ec11bcc?w=800&q=80',
       'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=800&q=80',
     ],
     rating: 4.7,
