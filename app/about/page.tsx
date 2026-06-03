@@ -91,7 +91,7 @@ export default function AboutPage() {
                 Redefining Online Shopping for the Modern World
               </h1>
               <p className="text-lg lg:text-xl text-muted-foreground text-pretty">
-                Since 2018, Swiserve has been on a mission to bring the world&apos;s best products 
+                Since 2026, Swiserve has been on a mission to bring the world&apos;s best products 
                 to your doorstep with unparalleled convenience and care.
               </p>
             </motion.div>
